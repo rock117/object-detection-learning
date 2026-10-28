@@ -67,7 +67,12 @@ Ultralytics YOLO 把多种视觉任务统一到同一套 API：`YOLO(权重).pre
 
 ---
 
-## 5. 官方文档
+## 5. 标注与术语
+
+- [06 · 真实项目标注实战](./06-annotation-in-practice.md)（预标注、SAM、外包、30 天计划）  
+- [术语表](./glossary.md)（SAM / SAM2、主动学习、伪标签等）
+
+## 6. 官方文档
 
 - [Tasks 总览](https://docs.ultralytics.com/tasks/)  
 - [YOLO11](https://docs.ultralytics.com/models/yolo11/) / [YOLO26](https://docs.ultralytics.com/models/yolo26/)

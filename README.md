@@ -36,6 +36,8 @@ object-detection-learning/
 │   ├── 03-dataset-and-annotation.md
 │   ├── 04-learning-roadmap.md
 │   ├── 05-yolo-tasks-overview.md      # 七大任务总览
+│   ├── 06-annotation-in-practice.md   # 真实项目标注实战
+│   ├── glossary.md                    # 术语表（SAM/SAM2 等）
 │   └── tasks/                         # 各任务详细说明
 │       ├── 01-detect.md
 │       ├── 02-instance-segment.md
@@ -77,6 +79,9 @@ object-detection-learning/
 
 完整对比与选型：[docs/05-yolo-tasks-overview.md](docs/05-yolo-tasks-overview.md)
 
+标注降本与产线：[docs/06-annotation-in-practice.md](docs/06-annotation-in-practice.md)  
+名词解释：[docs/glossary.md](docs/glossary.md)
+
 ## 5 分钟上手（检测）
 
 ```bash
@@ -90,8 +95,9 @@ python scripts/05_export_model.py
 1. [docs/01](docs/01-object-detection-basics.md) → 跑检测脚本  
 2. [docs/05 任务总览](docs/05-yolo-tasks-overview.md) → 按兴趣跑 `scripts/tasks/`  
 3. 精读对应 `docs/tasks/*.md`（场景、步骤、指标、坑）  
-4. [docs/03](docs/03-dataset-and-annotation.md) → 自有小数据训练  
-5. 按 [docs/04 路线图](docs/04-learning-roadmap.md) 做完整小项目  
+4. [docs/06 标注实战](docs/06-annotation-in-practice.md) + [术语表](docs/glossary.md)  
+5. [docs/03](docs/03-dataset-and-annotation.md) → 自有小数据训练  
+6. 按 [docs/04 路线图](docs/04-learning-roadmap.md) 做完整小项目  
 
 ## 模型规模参考
 
