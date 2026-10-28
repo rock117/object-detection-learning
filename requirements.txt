@@ -1,0 +1,11 @@
+# YOLO object detection learning stack
+ultralytics>=8.3.0
+opencv-python>=4.8.0
+matplotlib>=3.7.0
+numpy>=1.24.0
+Pillow>=10.0.0
+PyYAML>=6.0
+tqdm>=4.65.0
+# Optional: for Jupyter notebooks
+# jupyter>=1.0.0
+# ipywidgets>=8.0.0
