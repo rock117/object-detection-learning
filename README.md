@@ -1,104 +1,112 @@
-# 目标检测学习项目（YOLO）
+# 目标检测学习项目（YOLO 多任务）
 
-从零学习目标检测，以 **Ultralytics YOLO** 为主线，边读文档边跑代码。
+从零学习计算机视觉任务，以 **Ultralytics YOLO** 为主线：检测、实例分割、语义分割、深度估计、分类、姿态估计、旋转框（OBB）。
 
 ## 你能学到什么
 
-1. 目标检测基本概念（bbox、IoU、NMS、mAP）
-2. YOLO 系列思路与 YOLO11/YOLOv8 用法
-3. 预训练模型推理（图片 / 视频 / 摄像头）
-4. 自定义数据集标注与训练
-5. 简单导出与部署入门
+1. 目标检测基础（bbox、IoU、NMS、mAP）
+2. YOLO 七大任务的差异、场景与输出字段
+3. 预训练推理（图片 / 视频 / 摄像头）
+4. 自定义数据与训练入门
+5. 导出与部署起步
 
 ## 环境准备
 
-建议 Python 3.9+，使用虚拟环境：
+建议 Python 3.9+：
 
 ```bash
 # Windows PowerShell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+pip install -U ultralytics   # 语义分割 / 深度估计需要支持 YOLO26 的版本
 ```
 
-有 NVIDIA GPU 时，按 [PyTorch 官网](https://pytorch.org/) 安装对应 CUDA 版 `torch`，再装本项目依赖。CPU 也能跑推理和小数据集训练，只是会慢一些。
+有 NVIDIA GPU 时，按 [PyTorch 官网](https://pytorch.org/) 安装对应 CUDA 版 `torch`。
 
 ## 项目结构
 
 ```text
 object-detection-learning/
-├── README.md                 # 本文件
+├── README.md
 ├── requirements.txt
-├── docs/                     # 学习文档
+├── docs/
 │   ├── 01-object-detection-basics.md
 │   ├── 02-yolo-overview.md
 │   ├── 03-dataset-and-annotation.md
-│   └── 04-learning-roadmap.md
+│   ├── 04-learning-roadmap.md
+│   ├── 05-yolo-tasks-overview.md      # 七大任务总览
+│   └── tasks/                         # 各任务详细说明
+│       ├── 01-detect.md
+│       ├── 02-instance-segment.md
+│       ├── 03-semantic-segment.md
+│       ├── 04-depth.md
+│       ├── 05-classify.md
+│       ├── 06-pose.md
+│       └── 07-obb.md
 ├── configs/
-│   └── coco8.yaml            # 迷你数据集配置示例
-├── scripts/                  # 可运行入门代码
-│   ├── 01_predict_image.py
+├── scripts/
+│   ├── 01_predict_image.py            # 检测（基础）
 │   ├── 02_predict_video.py
 │   ├── 03_predict_webcam.py
 │   ├── 04_train_coco8.py
-│   └── 05_export_model.py
+│   ├── 05_export_model.py
+│   └── tasks/                         # 七大任务入门推理
+│       ├── predict_detect.py
+│       ├── predict_segment.py
+│       ├── predict_semantic.py
+│       ├── predict_depth.py
+│       ├── predict_classify.py
+│       ├── predict_pose.py
+│       └── predict_obb.py
 ├── data/
-│   ├── images/               # 放你的测试图片
-│   └── videos/               # 放你的测试视频
-├── weights/                  # 下载的模型权重（自动生成）
-└── notebooks/                # 可选：Jupyter 实验
+└── notebooks/
 ```
 
-## 5 分钟上手
+## 七大任务速查
 
-安装依赖后，在项目根目录执行：
+| 任务 | 默认权重 | 文档 | 命令 |
+|------|----------|------|------|
+| 检测 | `yolo11n.pt` | [docs/tasks/01-detect.md](docs/tasks/01-detect.md) | `python scripts/tasks/predict_detect.py` |
+| 实例分割 | `yolo11n-seg.pt` | [docs/tasks/02-instance-segment.md](docs/tasks/02-instance-segment.md) | `python scripts/tasks/predict_segment.py` |
+| 语义分割 | `yolo26n-sem.pt` | [docs/tasks/03-semantic-segment.md](docs/tasks/03-semantic-segment.md) | `python scripts/tasks/predict_semantic.py` |
+| 深度估计 | `yolo26n-depth.pt` | [docs/tasks/04-depth.md](docs/tasks/04-depth.md) | `python scripts/tasks/predict_depth.py` |
+| 分类 | `yolo11n-cls.pt` | [docs/tasks/05-classify.md](docs/tasks/05-classify.md) | `python scripts/tasks/predict_classify.py` |
+| 姿态估计 | `yolo11n-pose.pt` | [docs/tasks/06-pose.md](docs/tasks/06-pose.md) | `python scripts/tasks/predict_pose.py` |
+| OBB | `yolo11n-obb.pt` | [docs/tasks/07-obb.md](docs/tasks/07-obb.md) | `python scripts/tasks/predict_obb.py` |
+
+完整对比与选型：[docs/05-yolo-tasks-overview.md](docs/05-yolo-tasks-overview.md)
+
+## 5 分钟上手（检测）
 
 ```bash
-# 1. 用预训练模型检测一张图（会自动下载 yolo11n.pt）
 python scripts/01_predict_image.py
-
-# 2. 视频推理（需先把视频放到 data/videos/）
-python scripts/02_predict_video.py --source data/videos/demo.mp4
-
-# 3. 摄像头实时检测
-python scripts/03_predict_webcam.py
-
-# 4. 用官方迷你集 coco8 跑通训练流程（几分钟）
 python scripts/04_train_coco8.py
-
-# 5. 导出 ONNX（便于后续部署）
 python scripts/05_export_model.py
 ```
 
-结果默认写到 `runs/` 目录。
-
 ## 推荐学习顺序
 
-按 `docs/04-learning-roadmap.md` 走即可。简版：
+1. [docs/01](docs/01-object-detection-basics.md) → 跑检测脚本  
+2. [docs/05 任务总览](docs/05-yolo-tasks-overview.md) → 按兴趣跑 `scripts/tasks/`  
+3. 精读对应 `docs/tasks/*.md`（场景、步骤、指标、坑）  
+4. [docs/03](docs/03-dataset-and-annotation.md) → 自有小数据训练  
+5. 按 [docs/04 路线图](docs/04-learning-roadmap.md) 做完整小项目  
 
-1. 读 `docs/01-object-detection-basics.md`
-2. 跑 `scripts/01_predict_image.py`，观察框与类别
-3. 读 `docs/02-yolo-overview.md`
-4. 跑训练脚本，理解 `epochs` / `imgsz` / `batch`
-5. 读 `docs/03-dataset-and-annotation.md`，准备自己的小数据集
-6. 改配置再训练，对比指标变化
+## 模型规模参考
 
-## 常用模型体积参考（YOLO11）
-
-| 模型 | 参数量量级 | 速度 | 精度 | 适合场景 |
-|------|------------|------|------|----------|
-| yolo11n | 最小 | 最快 | 较低 | 入门、CPU、边缘 |
-| yolo11s | 小 | 快 | 中 | 日常实验 |
-| yolo11m | 中 | 中 | 较高 | 精度优先 |
-| yolo11l / x | 大 | 慢 | 高 | 服务器、追求 mAP |
-
-入门建议先用 **yolo11n**。
+| 后缀 | 速度 | 精度 | 用途 |
+|------|------|------|------|
+| n | 最快 | 较低 | 入门 / CPU / 边缘 |
+| s | 快 | 中 | 日常实验 |
+| m | 中 | 较高 | 精度优先 |
+| l / x | 慢 | 高 | 服务器 |
 
 ## 参考链接
 
-- [Ultralytics YOLO 文档](https://docs.ultralytics.com/)
-- [YOLO11 介绍](https://docs.ultralytics.com/models/yolo11/)
-- [COCO 数据集](https://cocodataset.org/)
+- [Ultralytics 文档](https://docs.ultralytics.com/)
+- [Tasks](https://docs.ultralytics.com/tasks/)
+- [YOLO11](https://docs.ultralytics.com/models/yolo11/) / [YOLO26](https://docs.ultralytics.com/models/yolo26/)
 
 ## License
 

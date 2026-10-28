@@ -57,11 +57,25 @@
 
 ---
 
-## 第 5 阶段：导出与扩展（按兴趣）
+## 第 5 阶段：多任务扩展（3～7 天）
+
+先读 [05 任务总览](./05-yolo-tasks-overview.md)，再按兴趣选做（每个任务都遵循「文档 → 推理脚本 → 看输出字段」）：
+
+- [ ] 实例分割：`docs/tasks/02` + `scripts/tasks/predict_segment.py`
+- [ ] 姿态估计：`docs/tasks/06` + `scripts/tasks/predict_pose.py`
+- [ ] 分类：`docs/tasks/05` + `scripts/tasks/predict_classify.py`
+- [ ] OBB：`docs/tasks/07` + `scripts/tasks/predict_obb.py`
+- [ ] 语义分割（需 YOLO26）：`docs/tasks/03` + `predict_semantic.py`
+- [ ] 深度估计（需 YOLO26）：`docs/tasks/04` + `predict_depth.py`
+
+**验收**：能说清「实例分割 vs 语义分割」以及「检测 vs OBB」各自何时用。
+
+---
+
+## 第 6 阶段：导出与部署（按兴趣）
 
 - [ ] `scripts/05_export_model.py` 导出 ONNX  
 - [ ] 了解 TensorRT / OpenVINO（选平台深入）  
-- [ ] 尝试 `segment` 或 `pose` 任务（换对应权重）  
 - [ ] 阅读 Ultralytics 官方「Train / Val / Predict / Export」章节  
 
 ---

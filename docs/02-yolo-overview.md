@@ -53,8 +53,12 @@ yolo export model=yolo11n.pt format=onnx
 - `yolo11n.pt` —— 检测  
 - `yolo11n-seg.pt` —— 实例分割  
 - `yolo11n-pose.pt` —— 姿态  
+- `yolo11n-cls.pt` —— 分类  
+- `yolo11n-obb.pt` —— 旋转框  
+- `yolo26n-sem.pt` —— 语义分割（YOLO26）  
+- `yolo26n-depth.pt` —— 深度估计（YOLO26）  
 
-本仓库聚焦 **detect**。
+多任务详解见 [05 · YOLO 多任务总览](./05-yolo-tasks-overview.md) 与 `docs/tasks/`。
 
 ---
 

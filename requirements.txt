@@ -1,4 +1,5 @@
-# YOLO object detection learning stack
+# YOLO multi-task learning stack
+# 建议再执行: pip install -U ultralytics  （语义分割/深度估计依赖 YOLO26）
 ultralytics>=8.3.0
 opencv-python>=4.8.0
 matplotlib>=3.7.0
