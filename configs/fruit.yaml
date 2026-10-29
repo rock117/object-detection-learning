@@ -1,0 +1,31 @@
+# 水果自定义数据集（多类检测 / 分割）
+#
+# 目录结构：
+#   datasets/fruit/
+#   ├── images/train/*.jpg
+#   ├── images/val/*.jpg
+#   ├── labels/train/*.txt   (与图片同名，YOLO 格式)
+#   └── labels/val/*.txt
+#
+# 训练（在项目根目录）：
+#   python scripts/04_train_coco8.py --data configs/fruit.yaml --epochs 50 --name train_fruit
+#
+# 重要：
+#   - 类别顺序（id）必须与标注工具里的顺序一致，改顺序 = 标签全错
+#   - 用 COCO 预训练模型自动预标注时，只有 apple / banana / orange 能直接命中
+#     （COCO 80 类里没有 pear、durian、grape 等，这些必须人工标）
+#   - 类别不必一次全用上：先删掉暂时不标的类，能少标很多空图
+
+path: ../datasets/fruit   # 如需更稳妥可写绝对路径
+train: images/train
+val: images/val
+
+names:
+  0: apple
+  1: pear
+  2: banana
+  3: orange
+  4: watermelon
+  5: strawberry
+  6: grape
+  7: durian

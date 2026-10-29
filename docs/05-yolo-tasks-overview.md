@@ -67,9 +67,10 @@ Ultralytics YOLO 把多种视觉任务统一到同一套 API：`YOLO(权重).pre
 
 ---
 
-## 5. 标注与术语
+## 5. 标注、跟踪与术语
 
 - [06 · 真实项目标注实战](./06-annotation-in-practice.md)（预标注、SAM、外包、30 天计划）  
+- [07 · ByteTrack 多目标跟踪](./07-bytetrack.md)（检测之上串 ID；非 YOLO 本体）  
 - [术语表](./glossary.md)（SAM / SAM2、主动学习、伪标签等）
 
 ## 6. 官方文档

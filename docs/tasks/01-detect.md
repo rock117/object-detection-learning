@@ -71,6 +71,16 @@ python scripts/04_train_coco8.py --epochs 10
 - 类别不在 COCO → 必须自己训练  
 - 小目标：适当增大 `imgsz`，或增加小目标样本  
 
-## 9. 参考
+## 9. 下一步：跟踪
+
+视频里需要「同一目标稳定 ID」时，在检测之上接 ByteTrack：
+
+```bash
+python scripts/06_track_bytetrack.py --source data/videos/demo.mp4
+```
+
+详见 [07 · ByteTrack](../07-bytetrack.md)。
+
+## 10. 参考
 
 - 官方：[Object Detection](https://docs.ultralytics.com/tasks/detect/)

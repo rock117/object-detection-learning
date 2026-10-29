@@ -65,7 +65,7 @@ yolo pose train data=coco8-pose.yaml model=yolo11n-pose.pt epochs=10
 
 - 用普通 `yolo11n.pt` 期望出骨架 → 必须用 `-pose`  
 - 侧身/遮挡导致点漂移：加难例数据或提高 conf 过滤低质量点  
-- 多人 ID 不稳定：姿态之上再加跟踪（ByteTrack 等）  
+- 多人 ID 不稳定：姿态之上再加跟踪，见 [07 · ByteTrack](../07-bytetrack.md)  
 
 ## 8. 参考
 

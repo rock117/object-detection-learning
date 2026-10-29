@@ -1,0 +1,11 @@
+# ByteTrack 示例配置（可复制后按场景微调）
+# 用法: python scripts/06_track_bytetrack.py --tracker configs/bytetrack.example.yaml
+# 官方说明: https://docs.ultralytics.com/modes/track/
+
+tracker_type: bytetrack
+track_high_thresh: 0.25 # 第一阶段高分匹配；抬高更干净、易断轨
+track_low_thresh: 0.1 # 第二阶段低分救援；过低易接噪声
+new_track_thresh: 0.25 # 开新轨迹门槛；抬高减少假 id
+track_buffer: 30 # 丢失后保留帧数；遮挡久可加大
+match_thresh: 0.8 # 关联相似度门槛
+fuse_score: True # 融合检测分做匹配

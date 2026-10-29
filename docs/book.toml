@@ -1,0 +1,17 @@
+[book]
+title = "目标检测学习（YOLO 多任务）"
+description = "以 Ultralytics YOLO 为主线：检测、分割、深度、分类、姿态、OBB"
+language = "zh"
+src = "."
+
+[build]
+build-dir = "../book"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/rock117/object-detection-learning"
+edit-url-template = "https://github.com/rock117/object-detection-learning/edit/main/docs/{path}"
+site-url = "/object-detection-learning/"
+no-section-label = true

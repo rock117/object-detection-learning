@@ -24,6 +24,17 @@ pip install -U ultralytics   # 语义分割 / 深度估计需要支持 YOLO26 �
 
 有 NVIDIA GPU 时，按 [PyTorch 官网](https://pytorch.org/) 安装对应 CUDA 版 `torch`。
 
+## 文档站点（mdBook）
+
+`docs/` 可用 [mdBook](https://rust-lang.github.io/mdBook/) 生成本地网页版文档：
+
+```bash
+# 需已安装 mdbook（cargo install mdbook）
+cd docs
+mdbook serve --open    # http://localhost:3000
+# mdbook build         # 静态站输出到仓库根目录 book/
+```
+
 ## 项目结构
 
 ```text
@@ -31,12 +42,16 @@ object-detection-learning/
 ├── README.md
 ├── requirements.txt
 ├── docs/
+│   ├── book.toml                      # mdBook 配置
+│   ├── SUMMARY.md                     # 文档目录
+│   ├── introduction.md                # 站点简介
 │   ├── 01-object-detection-basics.md
 │   ├── 02-yolo-overview.md
 │   ├── 03-dataset-and-annotation.md
 │   ├── 04-learning-roadmap.md
 │   ├── 05-yolo-tasks-overview.md      # 七大任务总览
 │   ├── 06-annotation-in-practice.md   # 真实项目标注实战
+│   ├── 07-bytetrack.md                # 检测之上的多目标跟踪
 │   ├── glossary.md                    # 术语表（SAM/SAM2 等）
 │   └── tasks/                         # 各任务详细说明
 │       ├── 01-detect.md
@@ -53,6 +68,7 @@ object-detection-learning/
 │   ├── 03_predict_webcam.py
 │   ├── 04_train_coco8.py
 │   ├── 05_export_model.py
+│   ├── 06_track_bytetrack.py          # YOLO + ByteTrack 跟踪
 │   └── tasks/                         # 七大任务入门推理
 │       ├── predict_detect.py
 │       ├── predict_segment.py
@@ -80,6 +96,7 @@ object-detection-learning/
 完整对比与选型：[docs/05-yolo-tasks-overview.md](docs/05-yolo-tasks-overview.md)
 
 标注降本与产线：[docs/06-annotation-in-practice.md](docs/06-annotation-in-practice.md)  
+多目标跟踪：[docs/07-bytetrack.md](docs/07-bytetrack.md)（`python scripts/06_track_bytetrack.py`）  
 名词解释：[docs/glossary.md](docs/glossary.md)
 
 ## 5 分钟上手（检测）
@@ -98,6 +115,7 @@ python scripts/05_export_model.py
 4. [docs/06 标注实战](docs/06-annotation-in-practice.md) + [术语表](docs/glossary.md)  
 5. [docs/03](docs/03-dataset-and-annotation.md) → 自有小数据训练  
 6. 按 [docs/04 路线图](docs/04-learning-roadmap.md) 做完整小项目  
+7. （可选）[docs/07 ByteTrack](docs/07-bytetrack.md) 把检测框串成轨迹  
 
 ## 模型规模参考
 

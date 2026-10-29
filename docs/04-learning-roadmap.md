@@ -106,7 +106,7 @@
 
 练熟检测后，可按兴趣分支：
 
-1. **跟踪**：ByteTrack 等，把框串成轨迹  
+1. **跟踪**：读 [07 · ByteTrack](./07-bytetrack.md)，跑 `python scripts/06_track_bytetrack.py`  
 2. **分割**：像素级 mask  
 3. **部署**：ONNX Runtime / 边缘设备  
 

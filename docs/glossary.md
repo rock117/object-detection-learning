@@ -173,7 +173,10 @@ SAM 的后续版本，对 **视频** 更强：在一帧上提示后，可把 mas
 用较强模型（teacher）给无标数据打标签，再拿去训学生模型。必须过滤低置信、并保留干净验证集。
 
 ### Tracking（多目标跟踪）
-跨帧给同一物体固定 ID（如 ByteTrack）。标注视频时也可借跟踪减少重复框选。检测/分割/姿态之上常接跟踪。
+跨帧给同一物体固定 ID（如 ByteTrack）。标注视频时也可借跟踪减少重复框选。检测/分割/姿态之上常接跟踪。详解与示例：[07 · ByteTrack](./07-bytetrack.md)。
+
+### ByteTrack
+轻量多目标跟踪算法（ECCV 2022）：用高低两档检测置信度分两阶段关联轨迹，无外观 ReID。适合固定机位。Ultralytics：`model.track(..., tracker="bytetrack.yaml")`。见 [07 · ByteTrack](./07-bytetrack.md)。
 
 ### Train / Val / Test Split
 - **Train**：训练  
