@@ -24,4 +24,5 @@
 
 - [06 · 标注实战](./06-annotation-in-practice.md)
 - [07 · ByteTrack 跟踪](./07-bytetrack.md)
+- [08 · 实例分割标注](./08-instance-seg-annotation.md)
 - [术语表](./glossary.md)

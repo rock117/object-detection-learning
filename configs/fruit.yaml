@@ -1,31 +1,25 @@
-# 水果自定义数据集（多类检测 / 分割）
+# 水果自定义数据集（榴莲 / 哈密瓜）
+#
+# 当前阶段：只采集图片，本文件先放着，等要训练时再用。
 #
 # 目录结构：
 #   datasets/fruit/
-#   ├── images/train/*.jpg
-#   ├── images/val/*.jpg
-#   ├── labels/train/*.txt   (与图片同名，YOLO 格式)
-#   └── labels/val/*.txt
+#   ├── images/raw/<类别>/          # 采集阶段：原始图（未标注）
+#   ├── images/train|val/*.jpg      # 标注后划分
+#   └── labels/train|val/*.txt      # YOLO 标签
 #
 # 训练（在项目根目录）：
 #   python scripts/04_train_coco8.py --data configs/fruit.yaml --epochs 50 --name train_fruit
 #
 # 重要：
-#   - 类别顺序（id）必须与标注工具里的顺序一致，改顺序 = 标签全错
-#   - 用 COCO 预训练模型自动预标注时，只有 apple / banana / orange 能直接命中
-#     （COCO 80 类里没有 pear、durian、grape 等，这些必须人工标）
-#   - 类别不必一次全用上：先删掉暂时不标的类，能少标很多空图
+#   - 类别 id 必须与标注工具里的顺序一致，改顺序 = 标签全错
+#   - COCO 80 类里没有 durian / hami_melon，预训练权重零帮助，必须人工标注
+#   - 想扩类（apple / banana / orange 等）就往后追加 id，不要插在中间
 
 path: ../datasets/fruit   # 如需更稳妥可写绝对路径
 train: images/train
 val: images/val
 
 names:
-  0: apple
-  1: pear
-  2: banana
-  3: orange
-  4: watermelon
-  5: strawberry
-  6: grape
-  7: durian
+  0: durian
+  1: hami_melon

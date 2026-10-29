@@ -1,0 +1,26 @@
+# 水果实例分割数据集（榴莲 / 哈密瓜）—— YOLO-seg 格式
+#
+# 与 configs/fruit.yaml（检测）的区别：
+#   检测标签：1 个框     cls xc yc w h              （每行 5 个数）
+#   分割标签：1 个多边形 cls x1 y1 x2 y2 ... xn yn   （每行 >= 7 个数）
+# 两者不能混用！训练脚本会根据标签列数自动判断任务类型。
+#
+# 目录结构（先标注 raw，再用 scripts/split_dataset.py 划分）：
+#   datasets/fruit/
+#   ├── images/raw/<类别>/*.jpg        # 原始图
+#   ├── images/train|val/*.jpg         # 划分后的图
+#   └── labels/train|val/*.txt         # 与图片同名，多边形标签
+#
+# 训练：
+#   python scripts/04_train_coco8.py --data configs/fruit-seg.yaml \
+#       --model yolo11n-seg.pt --epochs 50 --name train_fruit_seg
+#
+# 标注工具导出选项务必选「YOLO Segmentation / 多边形」，不要选检测框格式
+
+path: ../datasets/fruit
+train: images/train
+val: images/val
+
+names:
+  0: durian
+  1: hami_melon

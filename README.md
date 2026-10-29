@@ -52,6 +52,7 @@ object-detection-learning/
 │   ├── 05-yolo-tasks-overview.md      # 七大任务总览
 │   ├── 06-annotation-in-practice.md   # 真实项目标注实战
 │   ├── 07-bytetrack.md                # 检测之上的多目标跟踪
+│   ├── 08-instance-seg-annotation.md  # 实例分割标注实战（多边形）
 │   ├── glossary.md                    # 术语表（SAM/SAM2 等）
 │   └── tasks/                         # 各任务详细说明
 │       ├── 01-detect.md
@@ -69,6 +70,11 @@ object-detection-learning/
 │   ├── 04_train_coco8.py
 │   ├── 05_export_model.py
 │   ├── 06_track_bytetrack.py          # YOLO + ByteTrack 跟踪
+│   ├── collect_images.py              # 图片清洗：校验/去重/转jpg/重命名
+│   ├── fetch_fruit_images.py          # 图片采集：Wikimedia Commons + iNaturalist
+│   ├── make_contact_sheet.py          # 生成联系表预览，快速人工复查
+│   ├── check_seg_labels.py            # 实例分割标签质检（多边形合法性）
+│   ├── split_dataset.py               # 按类别分层划分 train/val
 │   └── tasks/                         # 七大任务入门推理
 │       ├── predict_detect.py
 │       ├── predict_segment.py
@@ -80,6 +86,16 @@ object-detection-learning/
 ├── data/
 └── notebooks/
 ```
+
+自定义数据（例如榴莲 / 哈密瓜）采集流程：
+
+```bash
+python scripts/fetch_fruit_images.py --class durian --limit 500   # 下载
+python scripts/collect_images.py                                  # 清洗去重
+python scripts/make_contact_sheet.py                              # 生成预览图复查
+```
+
+图片落在 `datasets/fruit/images/raw/<类别>/`。详见 [datasets/fruit/README.md](datasets/fruit/README.md) 与 [采集报告](datasets/fruit/COLLECTION_REPORT.md)。
 
 ## 七大任务速查
 
@@ -97,6 +113,7 @@ object-detection-learning/
 
 标注降本与产线：[docs/06-annotation-in-practice.md](docs/06-annotation-in-practice.md)  
 多目标跟踪：[docs/07-bytetrack.md](docs/07-bytetrack.md)（`python scripts/06_track_bytetrack.py`）  
+实例分割标注：[docs/08-instance-seg-annotation.md](docs/08-instance-seg-annotation.md)（多边形标签 + 质检 + 划分）  
 名词解释：[docs/glossary.md](docs/glossary.md)
 
 ## 5 分钟上手（检测）

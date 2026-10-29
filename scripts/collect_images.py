@@ -23,9 +23,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import shutil
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageOps
+
+# Windows 控制台默认 GBK，统一改成 UTF-8 避免中文输出乱码
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
 
 ROOT = Path(__file__).resolve().parents[1]
 EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".avif", ".gif"}
@@ -34,7 +43,7 @@ EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".avif", ".gi
 def ahash(img: Image.Image, size: int = 8) -> int:
     """平均哈希：对缩放、重压缩不敏感，用来抓近重复图。"""
     g = img.convert("L").resize((size, size), Image.Resampling.LANCZOS)
-    pixels = list(g.getdata())
+    pixels = list(g.tobytes())
     avg = sum(pixels) / len(pixels)
     bits = 0
     for i, p in enumerate(pixels):
@@ -45,6 +54,26 @@ def ahash(img: Image.Image, size: int = 8) -> int:
 
 def hamming(a: int, b: int) -> int:
     return bin(a ^ b).count("1")
+
+
+def dhash(img: Image.Image, size: int = 8) -> int:
+    """差异哈希：比较相邻像素的亮暗趋势，对亮度整体变化不敏感。
+
+    与 aHash 互补：aHash 只看"比平均亮还是暗"，缺乏纹理的图容易碰撞；
+    两者同时接近才判为重复，能大幅减少误删。
+    """
+    g = img.convert("L").resize((size + 1, size), Image.Resampling.LANCZOS)
+    px = list(g.tobytes())
+    w = size + 1
+    bits = 0
+    i = 0
+    for y in range(size):
+        row = y * w
+        for x in range(size):
+            if px[row + x] < px[row + x + 1]:
+                bits |= 1 << i
+            i += 1
+    return bits
 
 
 def md5_of(path: Path) -> str:
@@ -65,6 +94,30 @@ def move_to_rejected(path: Path, rejected_dir: Path, reason: str) -> None:
     shutil.move(str(path), str(target))
 
 
+def update_meta_filenames(meta_path: Path, rename_map: dict[str, str]) -> None:
+    """重命名后同步修正 _meta.csv 里的 file 列，保持溯源信息准确。"""
+    if not rename_map or not meta_path.exists():
+        return
+    import csv
+
+    with meta_path.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fields = reader.fieldnames or []
+        rows = list(reader)
+    changed = 0
+    for row in rows:
+        new_name = rename_map.get(row.get("file", ""))
+        if new_name:
+            row["file"] = new_name
+            changed += 1
+    if changed:
+        with meta_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(rows)
+        print(f"  [_meta.csv] 同步修正 {changed} 条文件名映射")
+
+
 def process_class(
     class_dir: Path,
     rejected_dir: Path,
@@ -72,11 +125,11 @@ def process_class(
     dry_run: bool,
     keep_duplicates: bool,
     min_side: int,
+    rename: bool = False,
 ) -> dict:
     stats = {"total": 0, "kept": 0, "bad": 0, "dup": 0, "small": 0}
     seen_md5: dict[str, Path] = {}
-    seen_hash: list[tuple[int, Path]] = []
-    kept_images: list[Path] = []
+    seen_hash: list[tuple[int, int, Path]] = []
 
     files = sorted(p for p in class_dir.iterdir() if p.is_file() and not p.name.startswith("."))
     stats["total"] = len(files)
@@ -108,8 +161,10 @@ def process_class(
                     continue
 
                 hv = ahash(im)
+                dv = dhash(im)
+                # 两个哈希同时接近才算重复（单靠 aHash 会把构图相似的图误删）
                 near = next(
-                    (p for h0, p in seen_hash if hamming(h0, hv) <= 4),
+                    (p for h0, d0, p in seen_hash if hamming(h0, hv) <= 4 and hamming(d0, dv) <= 6),
                     None,
                 )
                 if near is not None:
@@ -124,6 +179,9 @@ def process_class(
                 if im.mode not in ("RGB", "L"):
                     im = im.convert("RGB")
                 out = path.with_suffix(".jpg")
+                # 同名不同扩展（a.png / a.jpg）避免互相覆盖
+                if out != path and out.exists():
+                    out = out.with_name(out.stem + f"_{digest[:6]}.jpg")
                 tmp = out.with_name(out.stem + ".__tmp__.jpg")
                 if not dry_run:
                     im.save(tmp, "JPEG", quality=92, optimize=True)
@@ -135,27 +193,34 @@ def process_class(
             continue
 
         seen_md5[digest] = path
-        seen_hash.append((hv, path))
+        seen_hash.append((hv, dv, path))
         stats["kept"] += 1
-        kept_images.append(path)
 
-        if not dry_run:
-            if tmp.exists():
-                path.unlink()
-                tmp.rename(out)
-            kept_images[-1] = out
+        if not dry_run and tmp.exists():
+            path.unlink()
+            tmp.rename(out)
 
-    # 重命名：<类别>_0001.jpg
-    if not dry_run:
-        kept_images = sorted(p for p in class_dir.iterdir() if p.is_file() and not p.name.startswith("."))
-        for i, p in enumerate(kept_images, 1):
-            if p.suffix.lower() != ".jpg":
-                continue
-            target = class_dir / f"{class_dir.name}_{i:04d}.jpg"
-            if p != target:
-                if target.exists():
-                    target.unlink()
-                p.rename(target)
+    # 可选：重命名为 <类别>_0001.jpg（默认关闭，保留原始文件名以匹配 _meta.csv）
+    # 两阶段改名，避免 durian_0001.jpg 被前面的文件覆盖造成丢图
+    if rename and not dry_run:
+        imgs = sorted(
+            p
+            for p in class_dir.iterdir()
+            if p.is_file() and not p.name.startswith(".") and p.suffix.lower() == ".jpg"
+        )
+        staged: list[tuple[Path, Path]] = []
+        for p in imgs:
+            tmp_name = p.with_name(p.stem + ".__ren__.jpg")
+            p.rename(tmp_name)
+            staged.append((tmp_name, p))
+        rename_map: dict[str, str] = {}
+        for i, (tmp_name, orig) in enumerate(sorted(staged, key=lambda t: t[1].name), 1):
+            final = class_dir / f"{class_dir.name}_{i:04d}.jpg"
+            tmp_name.rename(final)
+            orig_name = orig.name.split(".__ren__")[0] + orig.suffix
+            if final.name != orig_name:
+                rename_map[orig_name] = final.name
+        update_meta_filenames(class_dir / "_meta.csv", rename_map)
 
     return stats
 
@@ -174,6 +239,11 @@ def main() -> None:
         "--keep-duplicates",
         action="store_true",
         help="重复图只统计不移动（保留原位，便于人工比对）",
+    )
+    parser.add_argument(
+        "--rename",
+        action="store_true",
+        help="额外重命名为 <类别>_0001.jpg（会同步修正 _meta.csv）",
     )
     args = parser.parse_args()
 
@@ -196,6 +266,7 @@ def main() -> None:
             args.dry_run,
             args.keep_duplicates,
             args.min_side,
+            args.rename,
         )
         for k in grand:
             grand[k] += stats[k]
